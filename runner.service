@@ -11,3 +11,6 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
+
+## Keep this file in this folder in ec2 or linux
+###sudo vim /etc/systemd/system/runner.service
