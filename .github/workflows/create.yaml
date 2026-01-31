@@ -1,15 +1,26 @@
 name: create self host  runner # name of the GitHub Actions workflow.
-on: workflow_dispatch ## workflow does not run automatically, It can be triggered manually from the GitHub UI
+on:
+  workflow_dispatch: ## workflow does not run automatically, It can be triggered manually from the GitHub UI
+    inputs:
+      action:
+        type: choice
+        description: "Terraform Action"
+        options:
+          - plan
+          - apply
+          - destroy
+        required: true
+        default: "apply"
 jobs: # job name
   create-runner: # job id
-    runs-on: ubuntu-latest  ## The job will run on the latest version of Ubuntu available in GitHub-hosted runners.
+    runs-on: ubuntu-latest ## The job will run on the latest version of Ubuntu available in GitHub-hosted runners.
     steps:
       - name: checkout code ## checkout code step
         uses: actions/checkout@v6 ## checkout action for code it  will automatically checkout the code from the repo
 
       - name: list files
         run: ls -l
-        
+
       # installs latest terraform in the runner
       - name: setup terraform
         uses: hashicorp/setup-terraform@v3
@@ -29,3 +40,8 @@ jobs: # job name
 
       - name: terraform approve
         run: terraform apply -auto-approve
+
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.action == 'destroy' }}
+        run: |
+          terraform destroy -auto-approve
